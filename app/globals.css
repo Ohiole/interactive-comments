@@ -6,18 +6,19 @@
 
 :root {
   --background: hsl(228, 33%, 97%);
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
-  color: var(--foreground);
   background: var(--background);
   font-family: "Rubik", sans-serif;
+}
+
+@layer base {
+  .num-comments{
+    @apply cursor-pointer fill-[#C5C6EF] group-hover:fill-purple transition duration-300
+  }
+
+  .reply{
+    @apply cursor-pointer fill-purple group-hover:fill-[#C5C6EF] transition duration-300
+  }
 }
