@@ -64,7 +64,7 @@ const Comment = () => {
           </div>
           <div className='my-3 text-[14px] text-gray-400'>
             <p>
-              Impressive! Though it seems the drag feature could be improved. But overall it looks incredible.You&#39;ve nailed the design and the responsiveness at various breakpoints works really well.
+              Impressive! Though it seems the drag feature could be improved. But overall it looks incredible. You&#39;ve nailed the design and the responsiveness at various breakpoints works really well.
             </p>
           </div>
         </div>
