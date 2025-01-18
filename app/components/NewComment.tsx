@@ -7,7 +7,7 @@ interface NewCommentProps {
 
 const NewComment: React.FC<NewCommentProps> = ({ text }) => {
   return (
-    <section className='bg-white p-4 rounded-md flex justify-between items-start gap-4 w-[600px]'>
+    <section className='bg-white p-4 rounded-md flex justify-between items-start gap-4 w-[600px] mb-5'>
         <Image src="/images/avatars/image-juliusomo.png" alt='User avatar' width={40} height={42} className="rounded-full" />
 
         <textarea 

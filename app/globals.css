@@ -21,4 +21,7 @@ body {
   .reply{
     @apply cursor-pointer fill-purple group-hover:fill-[#C5C6EF] transition duration-300
   }
+
+  .delete{
+  }
 }
