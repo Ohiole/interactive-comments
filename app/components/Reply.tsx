@@ -1,28 +1,52 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from "next/image"
-
-
-interface User {
-  image: { png: string; webp: string };
-  username: string;
-}
+import { User, Comments } from '@/lib/types';
+import { increaseScore, decreaseScore } from '@/lib/utils';
 
 interface ReplyProps {
   currentUser?: User;
+  commentReplies?: Comments[];
   id: number;
-  content: string;
-  createdAt: string;
-  score: number;
-  user: User;
-  replyingTo?: string,
-  replies: ReplyProps[];
 }
 
-const Reply: React.FC<ReplyProps> = ({ currentUser, content, createdAt, score, user, replyingTo }) => {
+
+const Reply: React.FC<ReplyProps> = ({ currentUser, commentReplies, id }) => {
+
+  const [reps, setReps] = useState<Comments | null>(null);
+
+  useEffect(() => {
+    setReps(commentReplies?.filter(i => i.id === id)[0] || null)
+
+    // console.log(reps)
+  }, [commentReplies, id])
+
+
+
+  const handleIncreaseScore = (id: number) => {
+    setReps((prevReps) => {
+      // Ensure prevReps is a single comment
+      if (!prevReps) return null;
+
+      // Call increaseScore with a single comment
+      return increaseScore(prevReps, id) as Comments | null;
+    });
+  };
+
+  const handleDecreaseScore = (id: number) => {
+    setReps((prevReps) => {
+      // Ensure prevReps is a single comment
+      if (!prevReps) return null;
+
+      // Call increaseScore with a single comment
+      return decreaseScore(prevReps, id) as Comments | null;
+    });
+  };
+
+
   return (
     <section className='bg-white p-4 rounded-md flex items-start gap-4 w-[550px]'>
       <div className="flex flex-col p-2 items-center gap-2 bg-purple-100 rounded-md">
-        <div className="group">
+        <div className="group" onClick={() => handleIncreaseScore(id)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="12"
@@ -36,9 +60,9 @@ const Reply: React.FC<ReplyProps> = ({ currentUser, content, createdAt, score, u
           </svg>
         </div>
 
-        <span className='text-purple font-semibold'>{score}</span>
+        <span className='text-purple font-semibold'>{reps?.score}</span>
 
-        <div className="group">
+        <div className="group" onClick={() => handleDecreaseScore(id)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="12"
@@ -55,20 +79,28 @@ const Reply: React.FC<ReplyProps> = ({ currentUser, content, createdAt, score, u
       <div className='w-full'>
         <div className='flex justify-between items-center'>
           <div className='flex justify-center items-center gap-3'>
-            <Image src={user.image.png} alt="User Avatar" width={32} height={32} className='rounded-full cursor-pointer' />
+            {reps?.user.image.png ? (
+              <Image
+                src={reps.user.image.png}
+                alt="User Avatar"
+                width={32}
+                height={32}
+                className="rounded-full cursor-pointer"
+              />
+            ) : null}
 
-            <span className="font-semibold text-sm text-gray-500">{user.username}</span>
+            <span className="font-semibold text-sm text-gray-500">{reps?.user.username}</span>
 
             {
-              user.username == currentUser?.username ?
+              reps?.user.username == currentUser?.username ?
                 <p className='px-1 text-white bg-purple text-sm rounded-sm'>you</p> : ""
             }
 
-            <span className="text-sm text-gray-400">{createdAt}</span>
+            <span className="text-sm text-gray-400">{reps?.createdAt}</span>
           </div>
 
           {
-            user.username == currentUser?.username ?
+            reps?.user.username == currentUser?.username ?
               <div className='flex items-center gap-3'>
                 <div className='group flex items-center gap-2'>
                   <svg
@@ -115,7 +147,7 @@ const Reply: React.FC<ReplyProps> = ({ currentUser, content, createdAt, score, u
         </div>
         <div className='my-3 text-[14px] text-gray-400'>
           <p>
-            <span className='font-bold text-purple'>@{replyingTo}</span> {content}
+            <span className='font-bold text-purple'>@{reps?.replyingTo}</span> {reps?.content}
           </p>
         </div>
       </div>

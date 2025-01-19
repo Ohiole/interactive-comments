@@ -4,28 +4,10 @@ import React, { useEffect, useState } from 'react'
 import Image from "next/image"
 import dataJson from '../data/data.json';
 import Reply from './Reply';
+import { increaseScore, decreaseScore } from '@/lib/utils';
+import { User, Comments, Data } from '@/lib/types';
 
 const Comment = () => {
-
-  interface User {
-    image: { png: string; webp: string };
-    username: string;
-  }
-
-  interface Comments {
-    id: number;
-    content: string;
-    createdAt: string;
-    score: number;
-    user: User;
-    replyingTo?: string,
-    replies: Comments[]; // Assuming replies are structured similarly to comments
-  }
-
-  interface Data {
-    currentUser: User;
-    comments: Comments[];
-  }
   
   const defaultUser: User = {
     image: { png: '', webp: '' },
@@ -48,19 +30,40 @@ const Comment = () => {
     }
   }, [data]);
 
-  // console.log(comments)
+
+  const handleIncreaseScore = (id: number) => {
+    setComments((prevComments) => {
+      // Ensure prevComments is an array of comments
+      if (!prevComments) return null;
+  
+      // Call increaseScore with an array of comments
+      return increaseScore(prevComments, id) as Comments[] | null;
+    });
+  };
+  
+
+  const handleDecreaseScore = (id: number) => {
+    setComments((prevComments) => {
+      // Ensure prevComments is an array of comments
+      if (!prevComments) return null;
+  
+      // Call increaseScore with an array of comments
+      return decreaseScore(prevComments, id) as Comments[] | null;
+    });
+  };
 
   return (
     <div className="flex flex-col gap-3 items-center mt-6">
       { 
         comments && comments.map((comment) => {
           return (
-            <>
+            <React.Fragment key={comment.id} >
 
-              <section key={comment.id} className='bg-white p-4 rounded-md flex items-start gap-4 w-[600px]'>
+              <section className='bg-white p-4 rounded-md flex items-start gap-4 w-[600px]'>
                 <div className="flex flex-col p-2 items-center gap-2 bg-purple-100 rounded-md">
-                    {/* <Image src="/images/icon-plus.svg" alt='plus sign' width={12} height={12} className='num-comments'/> */}
-                    <div className="group">
+                    <div className="group" 
+                      onClick={() => handleIncreaseScore(comment.id)}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="12"
@@ -78,7 +81,9 @@ const Comment = () => {
 
                     {/* <Image src="/images/icon-minus.svg" alt='plus sign' width={12} height={12} className='num-comments'/> */}
 
-                    <div className="group">
+                    <div className="group"
+                      onClick={() => handleDecreaseScore(comment.id)}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="12"
@@ -131,14 +136,19 @@ const Comment = () => {
                   {
                     comment.replies.map((reply) => {
                       return (
-                        <Reply key={reply.id} id={reply.id} currentUser={currentUser || defaultUser} content={reply.content} createdAt={reply.createdAt} score={reply.score} user={reply.user}  replyingTo={reply.replyingTo} replies={reply.replies}/>
+                        <Reply 
+                          key={reply.id} 
+                          id={reply.id} 
+                          currentUser={currentUser || defaultUser}  
+                          commentReplies={comment.replies} 
+                        />
                       )
                     })
                   }
                   </div>
                 </div> : ""
               }
-            </>
+            </React.Fragment>
             
           )
         }) 
