@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <section className="w-full min-h-screen flex flex-col gap-5 justify-center items-center">
       <Comment />
-      <NewComment text="comment"/>
+      <NewComment text="comment" />
     </section>
   );
 }

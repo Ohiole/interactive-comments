@@ -23,5 +23,6 @@ body {
   }
 
   .delete{
+    @apply cursor-pointer fill-red group-hover:fill-red-100 transition duration-300
   }
 }
