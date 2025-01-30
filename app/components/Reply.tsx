@@ -15,7 +15,15 @@ const Reply: React.FC<ReplyProps> = ({ currentUser, commentReplies, id }) => {
 
   const [reps, setReps] = useState<Comments | null>(null);
 
-  const [isReplying, setIsReplying] = useState<number | null>(null)
+  const [isReplying, setIsReplying] = useState<number | null>(null);
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const [reply, setReply] = useState<string | undefined>(reps?.content)
+
+  const handleChange = (event: { target: { value: React.SetStateAction<string | undefined>; }; }) => {
+    setReply(event.target.value)
+  }
 
   const showReply = (commentId: number) => {
 
@@ -25,8 +33,16 @@ const Reply: React.FC<ReplyProps> = ({ currentUser, commentReplies, id }) => {
   useEffect(() => {
     setReps(commentReplies?.filter(i => i.id === id)[0] || null)
 
+    if (reps?.content) {
+      setReply(reps.content)
+
+      if (isEditing && reps?.replyingTo) {
+        setReply(`@${reps.replyingTo + reps.content}`)
+      }
+    }
+
     // console.log(reps)
-  }, [commentReplies, id])
+  }, [commentReplies, id, reps, isEditing])
 
 
 
@@ -124,7 +140,7 @@ const Reply: React.FC<ReplyProps> = ({ currentUser, commentReplies, id }) => {
                     </svg>
                     <span className='font-medium text-sm text-red group-hover:text-red-100 cursor-pointer transition duration-300'>Delete</span>
                   </div>
-                  <div className='group flex items-center gap-2'>
+                  <div className='group flex items-center gap-2' onClick={() => setIsEditing(!isEditing)}>
                     <svg
                       width="14"
                       height="14"
@@ -154,14 +170,32 @@ const Reply: React.FC<ReplyProps> = ({ currentUser, commentReplies, id }) => {
             }
 
           </div>
-          <div className='my-3 text-[14px] text-gray-400'>
-            <p>
-              <span className='font-bold text-purple'>@{reps?.replyingTo}</span> {reps?.content}
-            </p>
-          </div>
+          {
+            isEditing && reps?.user.username == currentUser?.username ?
+              <div className="flex flex-col items-end w-full gap-2 mt-2">
+                <div className='w-full flex rounded-md px-4 py-2 gap-1 border-gray-200 border-solid border-[2px] group focus-within:border-purple-300 transition duration-200 h-[100px] text-sm  text-gray-400'>
+                  {/* <span>@{reps?.replyingTo}</span> */}
+                  <textarea
+                    name="new-comment"
+                    placeholder=''
+                    className='w-full outline-none'
+                    value={reply}
+                    onChange={handleChange}
+                  >
+                  </textarea>
+                </div>
+                <button className='py-2 px-4 bg-purple cursor-pointer text-sm text-background rounded-md hover:bg-purple-300 transition duration-200'>UPDATE</button>
+              </div>
+              :
+              <div className='my-3 text-[14px] text-gray-400'>
+                <p>
+                  <span className='font-bold text-purple'>@{reps?.replyingTo}</span> {reps?.content}
+                </p>
+              </div>
+          }
         </div>
       </section>
-      <NewComment text='reply' commentId={reps?.id} isReplyId={isReplying} replyToReply={true}/>
+      <NewComment text='reply' commentId={reps?.id} isReplyId={isReplying} replyToReply={true} replyingTo={reps?.user.username} />
     </>
 
   )

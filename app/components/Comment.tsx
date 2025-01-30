@@ -136,7 +136,7 @@ const Comment = () => {
                     </div>
                   </div>
                 </section>
-                <NewComment text='reply' commentId={comment.id} isReplyId={isReplying}/>
+                <NewComment text='reply' commentId={comment.id} isReplyId={isReplying} replyingTo={comment.user.username}/>
               </div>
               {
                 comment.replies.length > 0 ?
